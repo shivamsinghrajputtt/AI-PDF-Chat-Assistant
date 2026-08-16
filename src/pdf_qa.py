@@ -1,4 +1,4 @@
-"""Core PDF extraction and lightweight retrieval utilities."""
+"""PDF extraction and deterministic retrieval utilities."""
 
 from __future__ import annotations
 
@@ -6,6 +6,23 @@ import re
 from typing import BinaryIO
 
 from pypdf import PdfReader
+from pypdf.errors import PdfReadError
+
+
+def extract_pages_from_pdf(uploaded_file: BinaryIO) -> list[str]:
+    """Extract non-empty page text while preserving page boundaries."""
+    try:
+        if hasattr(uploaded_file, "seek"):
+            uploaded_file.seek(0)
+        reader = PdfReader(uploaded_file)
+        pages: list[str] = []
+        for page in reader.pages:
+            page_text = (page.extract_text() or "").strip()
+            if page_text:
+                pages.append(page_text)
+        return pages
+    except (PdfReadError, OSError, ValueError):
+        return []
 
 
 def extract_text_from_pdf(uploaded_file: BinaryIO) -> str:
@@ -14,16 +31,7 @@ def extract_text_from_pdf(uploaded_file: BinaryIO) -> str:
     Returns an empty string when the PDF cannot be parsed or contains no
     extractable text. UI-specific error handling belongs in the Streamlit app.
     """
-    try:
-        reader = PdfReader(uploaded_file)
-        pages = []
-        for page in reader.pages:
-            page_text = page.extract_text() or ""
-            if page_text.strip():
-                pages.append(page_text.strip())
-        return "\n\n".join(pages)
-    except Exception:
-        return ""
+    return "\n\n".join(extract_pages_from_pdf(uploaded_file))
 
 
 def _tokenize(text: str) -> list[str]:

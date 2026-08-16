@@ -7,7 +7,10 @@ from src.rag import SemanticRetriever, chunk_pages, document_collection_name
 class FakeEmbeddingFunction:
     """Small deterministic embedding function for fast retrieval tests."""
 
-    def __call__(self, input):
+    is_legacy = False
+
+    @staticmethod
+    def _embed(input):
         vectors = []
         for text in input:
             normalized = text.lower()
@@ -19,8 +22,18 @@ class FakeEmbeddingFunction:
                 vectors.append([0.0, 0.0, 1.0])
         return vectors
 
+    def embed_documents(self, input):
+        return self._embed(input)
+
+    def embed_query(self, input):
+        return self._embed(input)
+
+    def __call__(self, input):
+        """Keep compatibility with Chroma's legacy embedding protocol."""
+        return self._embed(input)
+
     def name(self):
-        """Match Chroma's embedding-function protocol for collection reuse."""
+        """Stable name for Chroma's embedding-function protocol."""
         return "default"
 
 

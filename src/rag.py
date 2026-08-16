@@ -151,7 +151,13 @@ class SemanticRetriever:
         if not query.strip() or top_k <= 0:
             return []
 
-        collection = self.client.get_collection(name=collection_name)
+        collection_kwargs: dict[str, Any] = {"name": collection_name}
+        if self.embedding_function is not None:
+            # Reuse the same embedding function used during indexing. Chroma
+            # otherwise falls back to its default 384-dimensional embedder,
+            # which can conflict with injected test/custom embeddings.
+            collection_kwargs["embedding_function"] = self.embedding_function
+        collection = self.client.get_collection(**collection_kwargs)
         count = collection.count()
         if count == 0:
             return []

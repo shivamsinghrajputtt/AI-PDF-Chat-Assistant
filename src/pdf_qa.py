@@ -27,8 +27,9 @@ def extract_text_from_pdf(uploaded_file: BinaryIO) -> str:
 
 
 def _tokenize(text: str) -> list[str]:
-    """Return normalized word tokens while preserving Unicode letters/numbers."""
-    return [token.lower() for token in re.findall(r"\w+", text, flags=re.UNICODE)]
+    """Return normalized tokens, including boundaries inside CamelCase words."""
+    normalized = re.sub(r"(?<=[a-z0-9])(?=[A-Z])", " ", text)
+    return [token.lower() for token in re.findall(r"\w+", normalized, flags=re.UNICODE)]
 
 
 def find_relevant_sentences(pdf_text: str, user_query: str, limit: int = 3) -> list[str]:

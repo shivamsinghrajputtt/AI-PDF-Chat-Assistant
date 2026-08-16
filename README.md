@@ -1,41 +1,78 @@
-# 📄 AI PDF Chat Assistant
+# 🤖 AI PDF Chat Assistant
 
-A lightweight PDF question-answering application built with **Python** and **Streamlit**.
+A portfolio-grade PDF question-answering system built with **Python, Streamlit, ChromaDB and RAG**.
 
-The current implementation extracts text from a PDF and ranks relevant sentences using local keyword overlap. The codebase is intentionally structured so a semantic **RAG + LLM** pipeline can be added as a later phase.
+> **Zero-cost by design:** no paid API is required. The app can return grounded excerpts locally, and users with Ollama installed can enable local LLM generation.
 
-## ✨ Current Features
+## ✨ Features
 
-- Upload PDF documents through a Streamlit UI
-- Extract text locally with `pypdf`
-- Ask questions about the uploaded document
-- Rank relevant sentences using deterministic keyword matching
-- Keep extracted text in Streamlit session state
-- Handle empty, unreadable, and unsupported scanned PDFs gracefully
-- Automated unit tests with pytest
-- GitHub Actions CI
+- 📄 Upload and extract text from PDFs with `pypdf`
+- 🧩 Page-aware overlapping chunking
+- 🔎 Semantic retrieval with persistent ChromaDB
+- 🧠 Grounded answer generation with strict context-only prompting
+- 📚 Page-level source tracking
+- 🛡️ No-context and LLM-failure fallbacks
+- 🆓 Deterministic extractive mode with no API key
+- 🖥️ Optional local Ollama generation
+- 📊 Retrieval evaluation with Hit Rate and MRR
+- 🧪 Automated regression tests
+- ⚙️ GitHub Actions CI
+- 🌐 GitHub Pages project showcase
 
 ## 🧱 Architecture
 
 ```text
-Streamlit UI
-     ↓
-PDF extraction (pypdf)
-     ↓
-Text retrieval / ranking
-     ↓
-Relevant document sentences
+                    ┌──────────────────┐
+                    │  Streamlit UI    │
+                    └────────┬─────────┘
+                             │
+                             ▼
+                    ┌──────────────────┐
+                    │ PDF Extraction   │
+                    │     pypdf        │
+                    └────────┬─────────┘
+                             │
+                             ▼
+                    ┌──────────────────┐
+                    │ Page-aware       │
+                    │ Chunking         │
+                    └────────┬─────────┘
+                             │
+                             ▼
+                    ┌──────────────────┐
+                    │ ChromaDB         │
+                    │ Semantic Search  │
+                    └────────┬─────────┘
+                             │
+                             ▼
+                 ┌──────────────────────────┐
+                 │ Grounded Answer Engine   │
+                 └────────────┬─────────────┘
+                              │
+                  ┌───────────┴───────────┐
+                  ▼                       ▼
+          Local Ollama             Extractive fallback
+                  │                       │
+                  └───────────┬───────────┘
+                              ▼
+                    Answer + Page Sources
 ```
 
-The retrieval layer is isolated from the UI so it can be replaced with embeddings, a vector database, and an LLM without rewriting the application layer.
+## 💰 Zero-cost deployment strategy
 
-## 🛠️ Tech Stack
+The core application does not depend on OpenAI, Gemini, Anthropic, or another paid inference API.
 
-- Python 3.11+
-- Streamlit
-- pypdf
-- pytest
-- GitHub Actions
+- **Default:** retrieval + deterministic grounded excerpts
+- **Optional:** Ollama running locally for natural-language generation
+- **Hosting:** GitHub Pages is used for the public project showcase. The interactive Streamlit runtime can be deployed separately on a free Streamlit-compatible host.
+
+## 🌐 Project Page
+
+After GitHub Pages is enabled for this repository, the showcase is available at:
+
+`https://shivamsinghrajputtt.github.io/AI-PDF-Chat-Assistant/`
+
+The page provides the architecture, features, and source-code entry point so recruiters can quickly inspect the project.
 
 ## 🚀 Run Locally
 
@@ -55,22 +92,39 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
-## 🧪 Run Tests
+### Optional local LLM
+
+Install [Ollama](https://ollama.com/), then pull a small model such as `gemma3:1b`. The application falls back automatically if Ollama is unavailable.
+
+## 🧪 Tests
 
 ```bash
 pytest -q
 ```
 
-## 🔭 Roadmap
+## 📊 Retrieval Evaluation
+
+Phase 4 introduces a small reproducible evaluation layer:
+
+- **Hit Rate:** percentage of questions where at least one expected source page was retrieved.
+- **MRR:** rewards retrieving a relevant page near the top of the ranking.
+- **Score thresholding:** allows weak semantic matches to be filtered before answer generation.
+
+No paid evaluation API is required.
+
+## 🗺️ Roadmap
 
 - [x] Separate UI from core PDF processing
-- [x] Add deterministic retrieval tests
-- [x] Add GitHub Actions CI
-- [ ] Add document chunking
-- [ ] Add embeddings and semantic retrieval
-- [ ] Add vector database persistence
-- [ ] Add LLM-based grounded answers with source references
-- [ ] Add evaluation cases for retrieval quality
+- [x] Page-aware chunking
+- [x] Semantic retrieval + ChromaDB
+- [x] Grounded answers + page sources
+- [x] Zero-cost fallback + optional local Ollama
+- [x] Retrieval evaluation metrics
+- [x] Regression tests + CI
+- [ ] Multi-document knowledge base
+- [ ] Conversation memory with document scoping
+- [ ] Retrieval/reranking experiments
+- [ ] Production deployment
 
 ## 👨‍💻 Developer
 

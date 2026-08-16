@@ -3,44 +3,121 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>AI PDF Chat Assistant</title>
-  <meta name="description" content="Zero-cost AI PDF question answering using RAG, ChromaDB and optional local Ollama.">
+  <title>AI PDF Chat Assistant · RAG Portfolio</title>
+  <meta name="description" content="Portfolio showcase for a zero-cost, multi-document AI PDF RAG assistant built with Python, Streamlit and ChromaDB.">
   <link rel="canonical" href="https://shivamsinghrajputtt.github.io/AI-PDF-Chat-Assistant/">
-  <meta property="og:title" content="AI PDF Chat Assistant">
-  <meta property="og:description" content="Portfolio showcase for a zero-cost, multi-document PDF RAG assistant.">
+  <meta property="og:title" content="AI PDF Chat Assistant · RAG Portfolio">
+  <meta property="og:description" content="Multi-document PDF question answering with semantic retrieval, grounded answers and optional local Ollama.">
   <meta property="og:url" content="https://shivamsinghrajputtt.github.io/AI-PDF-Chat-Assistant/">
   <meta property="og:type" content="website">
   <style>
-    :root { color-scheme: dark; font-family: Inter, system-ui, sans-serif; }
-    body { margin: 0; background: #0b1020; color: #eef2ff; }
-    main { max-width: 920px; margin: auto; padding: 72px 24px; }
-    .badge { display: inline-block; padding: 7px 11px; border: 1px solid #334155; border-radius: 999px; color: #93c5fd; }
-    h1 { font-size: clamp(2.5rem, 7vw, 5rem); line-height: .95; margin: 22px 0; }
-    p { color: #cbd5e1; line-height: 1.7; max-width: 720px; }
-    .actions { display: flex; gap: 12px; flex-wrap: wrap; margin: 28px 0 48px; }
-    a { color: inherit; text-decoration: none; }
-    .button { padding: 12px 18px; border-radius: 10px; border: 1px solid #475569; background: #111827; }
-    .primary { background: #e2e8f0; color: #0f172a; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
-    .card { padding: 20px; border: 1px solid #263244; border-radius: 14px; background: #111827; }
-    code { color: #93c5fd; }
+    :root { color-scheme: dark; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; --bg:#070b14; --panel:#0f1726; --line:#22304a; --muted:#a8b3c7; --text:#f4f7ff; --accent:#8ab4ff; }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; background:radial-gradient(circle at 80% 0%, #16213b 0, transparent 32%), var(--bg); color:var(--text); }
+    main { max-width:1060px; margin:auto; padding:28px 24px 80px; }
+    nav { display:flex; justify-content:space-between; align-items:center; gap:20px; padding:8px 0 54px; }
+    nav strong { letter-spacing:.2px; }
+    nav a { color:var(--muted); margin-left:18px; }
+    a { color:inherit; text-decoration:none; }
+    .hero { padding:36px 0 76px; }
+    .badge { display:inline-flex; padding:7px 11px; border:1px solid #35517e; border-radius:999px; color:#b7d3ff; background:#0b1425; font-size:.9rem; }
+    h1 { max-width:900px; font-size:clamp(3rem,8vw,6.4rem); line-height:.92; letter-spacing:-.055em; margin:22px 0; }
+    .lead { max-width:760px; font-size:1.18rem; color:#c9d3e6; line-height:1.75; }
+    .actions { display:flex; gap:12px; flex-wrap:wrap; margin:30px 0 18px; }
+    .button { display:inline-flex; align-items:center; padding:12px 18px; border-radius:10px; border:1px solid #3b4a64; background:#101a2b; font-weight:650; }
+    .primary { background:#eef4ff; color:#0b1220; border-color:#eef4ff; }
+    .note { color:var(--muted); font-size:.9rem; }
+    section { margin-top:70px; }
+    .eyebrow { color:var(--accent); font-size:.82rem; font-weight:800; letter-spacing:.12em; text-transform:uppercase; }
+    h2 { font-size:clamp(1.8rem,4vw,2.7rem); margin:10px 0 14px; }
+    .section-copy { color:var(--muted); max-width:700px; line-height:1.7; }
+    .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; }
+    .card { padding:22px; border:1px solid var(--line); border-radius:16px; background:rgba(15,23,38,.82); }
+    .card h3 { margin:0 0 9px; }
+    .card p { margin:0; color:var(--muted); line-height:1.65; }
+    .flow { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin-top:24px; }
+    .step { padding:18px; border:1px solid var(--line); border-radius:14px; background:#0b1322; }
+    .step span { display:block; color:var(--accent); font-size:.78rem; font-weight:800; margin-bottom:8px; }
+    .step strong { display:block; margin-bottom:6px; }
+    .step small { color:var(--muted); line-height:1.5; }
+    .tech { display:flex; flex-wrap:wrap; gap:9px; margin-top:22px; }
+    .tech span { border:1px solid var(--line); background:#0d1626; padding:8px 11px; border-radius:8px; color:#cbd5e1; font-size:.9rem; }
+    .callout { padding:26px; border:1px solid #304565; border-radius:18px; background:linear-gradient(135deg,#101d32,#0c1422); }
+    footer { margin-top:80px; padding-top:24px; border-top:1px solid var(--line); color:var(--muted); display:flex; justify-content:space-between; gap:20px; flex-wrap:wrap; }
+    footer a { color:#c9d8f2; }
+    @media (max-width:650px) { main{padding:18px 18px 60px;} nav{padding-bottom:30px;} nav div a{display:none;} .hero{padding-top:20px;} h1{font-size:3.25rem;} }
   </style>
 </head>
 <body>
 <main>
-  <span class="badge">Python · Streamlit · ChromaDB · RAG</span>
-  <h1>AI PDF Chat Assistant</h1>
-  <p>Ask questions about a PDF using page-aware chunking, semantic retrieval and grounded answers. The core application is designed to work without paid APIs.</p>
-  <div class="actions">
-    <a class="button primary" href="https://github.com/shivamsinghrajputtt/AI-PDF-Chat-Assistant">View source on GitHub</a>
-    <a class="button" href="https://github.com/shivamsinghrajputtt/AI-PDF-Chat-Assistant#run-locally">Run locally</a>
-  </div>
-  <section class="grid">
-    <div class="card"><strong>RAG Retrieval</strong><p>Page-aware chunks indexed in ChromaDB with semantic similarity search.</p></div>
-    <div class="card"><strong>Grounded Answers</strong><p>LLM prompts are restricted to retrieved PDF context and expose source pages.</p></div>
-    <div class="card"><strong>Zero-Cost Mode</strong><p>Deterministic extractive fallback works without an API key. Optional Ollama runs locally.</p></div>
-    <div class="card"><strong>Evaluation</strong><p>Retrieval hit-rate and MRR utilities provide a reproducible quality baseline.</p></div>
+  <nav>
+    <strong>AI PDF Chat Assistant</strong>
+    <div><a href="#features">Features</a><a href="#architecture">Architecture</a><a href="#tech">Stack</a></div>
+  </nav>
+
+  <header class="hero">
+    <span class="badge">Python · Streamlit · ChromaDB · RAG</span>
+    <h1>Chat with your PDFs — grounded in evidence.</h1>
+    <p class="lead">A portfolio-grade multi-document PDF assistant that validates files, extracts page-aware chunks, retrieves relevant evidence and answers from that evidence. No paid AI API is required.</p>
+    <div class="actions">
+      <a class="button primary" href="https://github.com/shivamsinghrajputtt/AI-PDF-Chat-Assistant">View source on GitHub ↗</a>
+      <a class="button" href="https://github.com/shivamsinghrajputtt/AI-PDF-Chat-Assistant#run-locally">Run locally</a>
+    </div>
+    <div class="note">Zero-cost default · Optional local Ollama · Automated regression tests</div>
+  </header>
+
+  <section id="features">
+    <div class="eyebrow">Why this project</div>
+    <h2>Built as a real RAG system, not a prompt wrapper.</h2>
+    <p class="section-copy">The application keeps retrieval, evidence filtering, answer generation and conversation memory as separate responsibilities, making the system easier to test and reason about.</p>
+    <div class="grid" style="margin-top:24px">
+      <article class="card"><h3>Multi-document retrieval</h3><p>Upload several PDFs and search them together through separate persistent ChromaDB collections.</p></article>
+      <article class="card"><h3>Grounded answers</h3><p>Only relevant retrieved chunks are passed to the answer engine, with document and page sources exposed to the user.</p></article>
+      <article class="card"><h3>Safe fallback</h3><p>If no useful context is retrieved or Ollama is unavailable, the deterministic extractive path still works without an API key.</p></article>
+      <article class="card"><h3>Conversation memory</h3><p>Follow-up questions use bounded contextual memory instead of an ever-growing chat history.</p></article>
+      <article class="card"><h3>Quality evaluation</h3><p>Hit Rate and MRR utilities make retrieval quality measurable and regression-testable.</p></article>
+      <article class="card"><h3>Input validation</h3><p>PDF uploads are validated and fingerprinted before indexing to avoid invalid or duplicate work.</p></article>
+    </div>
   </section>
+
+  <section id="architecture">
+    <div class="eyebrow">Architecture</div>
+    <h2>From document to grounded answer.</h2>
+    <div class="flow">
+      <div class="step"><span>01</span><strong>Upload</strong><small>Validate + fingerprint PDF</small></div>
+      <div class="step"><span>02</span><strong>Extract</strong><small>Read text page by page</small></div>
+      <div class="step"><span>03</span><strong>Chunk</strong><small>Overlap page-aware text</small></div>
+      <div class="step"><span>04</span><strong>Index</strong><small>Store in ChromaDB</small></div>
+      <div class="step"><span>05</span><strong>Retrieve</strong><small>Rank semantic evidence</small></div>
+      <div class="step"><span>06</span><strong>Answer</strong><small>Grounded response + sources</small></div>
+    </div>
+  </section>
+
+  <section id="tech">
+    <div class="eyebrow">Engineering stack</div>
+    <h2>Simple, testable, free-first.</h2>
+    <div class="tech">
+      <span>Python</span><span>Streamlit</span><span>ChromaDB</span><span>pypdf</span><span>Semantic Retrieval</span><span>Ollama (optional)</span><span>pytest</span><span>GitHub Actions</span><span>GitHub Pages</span>
+    </div>
+  </section>
+
+  <section>
+    <div class="callout">
+      <div class="eyebrow">Try it</div>
+      <h2>Run the full application locally.</h2>
+      <p class="section-copy">The showcase is static because GitHub Pages does not run Python. The interactive Streamlit application is designed to run locally or on a free Python-compatible host.</p>
+      <div class="actions" style="margin-bottom:0">
+        <a class="button primary" href="https://github.com/shivamsinghrajputtt/AI-PDF-Chat-Assistant#run-locally">Open setup instructions ↗</a>
+        <a class="button" href="https://github.com/shivamsinghrajputtt/AI-PDF-Chat-Assistant/blob/main/docs/ARCHITECTURE.md">Read architecture ↗</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>Built by Shivam Kumar Singh · GenAI & Full-Stack Development</span>
+    <a href="https://github.com/shivamsinghrajputtt">GitHub ↗</a>
+  </footer>
 </main>
 </body>
 </html>

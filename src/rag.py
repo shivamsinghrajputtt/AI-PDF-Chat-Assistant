@@ -79,8 +79,7 @@ def chunk_pages(
             if end >= len(text):
                 break
 
-            next_start = max(start + 1, end - overlap)
-            start = next_start
+            start = max(start + 1, end - overlap)
 
     return chunks
 
@@ -92,10 +91,30 @@ def document_collection_name(pages: Sequence[str]) -> str:
 
 
 class SemanticRetriever:
-    """Persistent Chroma-backed semantic retriever using local embeddings."""
+    """Persistent Chroma-backed semantic retriever.
 
-    def __init__(self, storage_path: str | Path = ".chroma") -> None:
-        self.client = chromadb.PersistentClient(path=str(storage_path))
+    Chroma's default embedding function provides local Sentence Transformer
+    embeddings when no custom embedding function is supplied.
+    """
+
+    def __init__(
+        self,
+        storage_path: str | Path = ".chroma",
+        *,
+        client: Any | None = None,
+        embedding_function: Any | None = None,
+    ) -> None:
+        self.client = client or chromadb.PersistentClient(path=str(storage_path))
+        self.embedding_function = embedding_function
+
+    def _get_collection(self, name: str):
+        kwargs: dict[str, Any] = {
+            "name": name,
+            "configuration": {"hnsw": {"space": "cosine"}},
+        }
+        if self.embedding_function is not None:
+            kwargs["embedding_function"] = self.embedding_function
+        return self.client.get_or_create_collection(**kwargs)
 
     def index_pages(
         self,
@@ -110,18 +129,12 @@ class SemanticRetriever:
 
         chunks = chunk_pages(pages, chunk_size=chunk_size, overlap=overlap)
         collection_name = document_collection_name(pages)
-        collection = self.client.get_or_create_collection(
-            name=collection_name,
-            configuration={"hnsw": {"space": "cosine"}},
-        )
+        collection = self._get_collection(collection_name)
         collection.upsert(
             ids=[chunk.chunk_id for chunk in chunks],
             documents=[chunk.text for chunk in chunks],
             metadatas=[
-                {
-                    "page": chunk.page,
-                    "chunk_index": chunk.chunk_index,
-                }
+                {"page": chunk.page, "chunk_index": chunk.chunk_index}
                 for chunk in chunks
             ],
         )

@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI PDF Chat Assistant</title>
+  <meta name="description" content="Zero-cost AI PDF question answering using RAG, ChromaDB and optional local Ollama.">
+  <style>
+    :root { color-scheme: dark; font-family: Inter, system-ui, sans-serif; }
+    body { margin: 0; background: #0b1020; color: #eef2ff; }
+    main { max-width: 920px; margin: auto; padding: 72px 24px; }
+    .badge { display: inline-block; padding: 7px 11px; border: 1px solid #334155; border-radius: 999px; color: #93c5fd; }
+    h1 { font-size: clamp(2.5rem, 7vw, 5rem); line-height: .95; margin: 22px 0; }
+    p { color: #cbd5e1; line-height: 1.7; max-width: 720px; }
+    .actions { display: flex; gap: 12px; flex-wrap: wrap; margin: 28px 0 48px; }
+    a { color: inherit; text-decoration: none; }
+    .button { padding: 12px 18px; border-radius: 10px; border: 1px solid #475569; background: #111827; }
+    .primary { background: #e2e8f0; color: #0f172a; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+    .card { padding: 20px; border: 1px solid #263244; border-radius: 14px; background: #111827; }
+    code { color: #93c5fd; }
+  </style>
+</head>
+<body>
+<main>
+  <span class="badge">Python · Streamlit · ChromaDB · RAG</span>
+  <h1>AI PDF Chat Assistant</h1>
+  <p>Ask questions about a PDF using page-aware chunking, semantic retrieval and grounded answers. The core application is designed to work without paid APIs.</p>
+  <div class="actions">
+    <a class="button primary" href="https://github.com/shivamsinghrajputtt/AI-PDF-Chat-Assistant">View source on GitHub</a>
+    <a class="button" href="https://github.com/shivamsinghrajputtt/AI-PDF-Chat-Assistant#run-locally">Run locally</a>
+  </div>
+  <section class="grid">
+    <div class="card"><strong>RAG Retrieval</strong><p>Page-aware chunks indexed in ChromaDB with semantic similarity search.</p></div>
+    <div class="card"><strong>Grounded Answers</strong><p>LLM prompts are restricted to retrieved PDF context and expose source pages.</p></div>
+    <div class="card"><strong>Zero-Cost Mode</strong><p>Deterministic extractive fallback works without an API key. Optional Ollama runs locally.</p></div>
+    <div class="card"><strong>Evaluation</strong><p>Retrieval hit-rate and MRR utilities provide a reproducible quality baseline.</p></div>
+  </section>
+</main>
+</body>
+</html>

@@ -19,6 +19,10 @@ class FakeEmbeddingFunction:
                 vectors.append([0.0, 0.0, 1.0])
         return vectors
 
+    def name(self):
+        """Match Chroma's embedding-function protocol for collection reuse."""
+        return "default"
+
 
 def test_chunk_pages_preserves_page_metadata_and_overlap():
     chunks = chunk_pages(
